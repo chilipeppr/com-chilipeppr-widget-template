@@ -1,10 +1,104 @@
-/* CSS for ChiliPeppr Widget */
-
-#com-chilipeppr-widget-template {
-   
+#com-chilipeppr-widget-grbl-body {
+    /*padding:0; */
+}
+.com-chilipeppr-interface-cnccontroller-stat .col{
+    padding:0 10px 0 0;
+}
+#com-chilipeppr-widget-grbl-body{
+    font-size:12px;
+}
+.com-chilipeppr-interface-cnccontroller-stat .col:last-child {
+    padding:0;
+}
+.com-chilipeppr-interface-cnccontroller-stat .progress {
+    margin-bottom:0;
+}
+.com-chilipeppr-interface-cnccontroller-stat .stat-row {
+    padding-top:2px;
+}
+.com-chilipeppr-interface-cnccontroller-stat .col.lblpad {
+    padding-left:10px;
+}
+  
+.com-chilipeppr-interface-cnccontroller-stat  .col.well {
+    margin-bottom:0px;
+    padding-left:5px;
+}
+.com-chilipeppr-interface-cnccontroller-stat  .stat-sm {
+    font-size:12px;
 }
 
-#com-chilipeppr-widget-template .nav-tabs>li>a {
-    padding: 2px 6px;
+#com-chilipeppr-widget-grbl .enabled{
+    background-color: #CCFF99;
 }
 
+
+
+.v1Show{
+    display: none; 
+}
+.com-chilipeppr-widget-grbl-realtime-commands .well{
+    padding: 5px;
+
+}
+.com-chilipeppr-widget-grbl-realtime-commands .overrides-btn{
+    margin-bottom: 10px;
+}
+.com-chilipeppr-widget-grbl-realtime-commands .col:last-child{
+    padding:0;
+}
+#grbl-config-div .input-group {
+    margin-bottom: 2px;
+}
+#grbl-config-div .input-group-addon:first-child{
+    width:15%;
+}
+#grbl-config-div .input-group-addon:last-child{
+    width:60%;
+    text-align: left;
+}
+
+.switch-button-label {
+    float: left;
+
+    font-size: 10pt;
+    cursor: pointer;
+}
+
+.switch-button-label.off {
+    color: #adadad;
+}
+
+.switch-button-label.on {
+    color: #0088CC;
+}
+
+.switch-button-background {
+    float: left;
+    position: relative;
+
+    background: #ccc;
+    border: 1px solid #aaa;
+
+    margin: 1px 10px;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+
+    cursor: pointer;
+}
+
+.switch-button-button {
+    position: absolute;
+
+    left: -1px;
+    top : -1px;
+
+    background: #FAFAFA;
+    border: 1px solid #aaa;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}

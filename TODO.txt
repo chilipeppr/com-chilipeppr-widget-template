@@ -1,0 +1,12 @@
+TODO LIST:
+
+- Check errors in the serial console throwed by grbl when hold-resume or door-resume multiple times (I've got: error:25 error:33 error:33 error:2)
+- issues with units not changing properly.  need to discuss.
+
+
+
+
+DONE:
+
+- UI resume button now changes if door / hold status has been matched on status (so if CP is reloaded status is correct)
+- corrected the toggle panel display button

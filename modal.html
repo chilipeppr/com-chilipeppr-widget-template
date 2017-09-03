@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    -->
+    <script>
+        /* global $ */
+         var configFormatData = [{
+            "code": "0",
+            "setting": "Step pulse time",
+            "units": "microseconds",
+            "explanation": "Sets time length per step. Minimum 3usec.",
+            "tab": "Steps",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 3
+        }, {
+            "code": "1",
+            "setting": "Step idle delay",
+            "units": "milliseconds",
+            "explanation": "Sets a short hold delay when stopping to let dynamics settle before disabling steppers. Value 255 keeps motors enabled with no delay.",
+            "tab": "Steps",
+            "fieldType": "integer",
+            "values": [],
+            "maximum": 255,
+            "minimum": 0
+        }, {
+            "code": "2",
+            "setting": "Step pulse invert",
+            "units": "mask",
+            "explanation": "Inverts the step signal.",
+            "tab": "Inversions",
+            "fieldType": "axisMask",
+            "minimum": 0
+        }, {
+            "code": "3",
+            "setting": "Step direction invert",
+            "units": "mask",
+            "explanation": "Inverts the direction signal.",
+            "tab": "Inversions",
+            "fieldType": "axisMask",
+            "minimum": 0
+        }, {
+            "code": "4",
+            "setting": "Invert step enable pin",
+            "units": "boolean",
+            "explanation": "Inverts the stepper driver enable pin signal.",
+            "tab": "Inversions",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "5",
+            "setting": "Invert limit pins",
+            "units": "boolean",
+            "explanation": "Inverts the all of the limit input pins.",
+            "tab": "Inversions",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "6",
+            "setting": "Invert probe pin",
+            "units": "boolean",
+            "explanation": "Inverts the probe input pin signal.",
+            "tab": "Inversions",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "10",
+            "setting": "Status report options",
+            "units": "mask",
+            "explanation": "Alters data included in status reports.",
+            "tab": "Reporting",
+            "fieldType": "switch",
+            "values": ["standard", "full"],
+            "minimum": 0
+        }, {
+            "code": "11",
+            "setting": "Junction deviation",
+            "units": "millimeters",
+            "explanation": "Sets how fast Grbl travels through consecutive motions. Lower value slows it down.",
+            "tab": "Junction Deviation",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "12",
+            "setting": "Arc tolerance",
+            "units": "millimeters",
+            "explanation": "Sets the G2 and G3 arc tracing accuracy based on radial error. Beware: A very small value may effect performance.",
+            "tab": "Arc Tolerance",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "13",
+            "setting": "Report in inches",
+            "units": "boolean",
+            "explanation": "Enables inch units when returning any position and rate value that is not a settings value.",
+            "tab": "Reporting",
+            "fieldType": "switch",
+            "values": ["mm", "inch"],
+            "minimum": 0
+        }, {
+            "code": "20",
+            "setting": "Soft limits enable",
+            "units": "boolean",
+            "explanation": "Enables soft limits checks within machine travel and sets alarm when exceeded. Requires homing.",
+            "tab": "Limits",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "21",
+            "setting": "Hard limits enable",
+            "units": "boolean",
+            "explanation": "Enables hard limits. Immediately halts motion and throws an alarm when switch is triggered.",
+            "tab": "Limits",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "22",
+            "setting": "Homing cycle enable",
+            "units": "boolean",
+            "explanation": "Enables homing cycle. Requires limit switches on all axes.",
+            "tab": "Homing",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "23",
+            "setting": "Homing direction invert",
+            "units": "mask",
+            "explanation": "Homing searches for a switch in the positive direction. Set axis bit (00000ZYX) to search in negative direction.",
+            "tab": "Homing",
+            "fieldType": "axisMask",
+            "minimum": 0
+        }, {
+            "code": "24",
+            "setting": "Homing locate feed rate",
+            "units": "mm\/min",
+            "explanation": "Feed rate to slowly engage limit switch to determine its location accurately.",
+            "tab": "Homing",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "25",
+            "setting": "Homing search seek rate",
+            "units": "mm\/min",
+            "explanation": "Seek rate to quickly find the limit switch before the slower locating phase.",
+            "tab": "Homing",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "26",
+            "setting": "Homing switch debounce delay",
+            "units": "milliseconds",
+            "explanation": "Sets a short delay between phases of homing cycle to let a switch debounce.",
+            "tab": "Homing",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "27",
+            "setting": "Homing switch pull-off distance",
+            "units": "millimeters",
+            "explanation": "Retract distance after triggering switch to disengage it. Homing will fail if switch isn't cleared.",
+            "tab": "Homing",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "30",
+            "setting": "Maximum spindle speed",
+            "units": "RPM",
+            "explanation": "Maximum spindle speed. Sets PWM to 100% duty cycle.",
+            "tab": "Spindle",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "31",
+            "setting": "Minimum spindle speed",
+            "units": "RPM",
+            "explanation": "Minimum spindle speed. Sets PWM to 0.4% or lowest duty cycle.",
+            "tab": "Spindle",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "32",
+            "setting": "Laser-mode enable",
+            "units": "boolean",
+            "explanation": "Enables laser mode. Consecutive G1\/2\/3 commands will not halt when spindle speed is changed.",
+            "tab": "Laser",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "100",
+            "setting": "X-axis travel resolution",
+            "units": "step\/mm",
+            "explanation": "X-axis travel resolution in steps per millimeter.",
+            "tab": "Axis Resolution",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "101",
+            "setting": "Y-axis travel resolution",
+            "units": "step\/mm",
+            "explanation": "Y-axis travel resolution in steps per millimeter.",
+            "tab": "Axis Resolution",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "102",
+            "setting": "Z-axis travel resolution",
+            "units": "step\/mm",
+            "explanation": "Z-axis travel resolution in steps per millimeter.",
+            "tab": "Axis Resolution",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "110",
+            "setting": "X-axis maximum rate",
+            "units": "mm\/min",
+            "explanation": "X-axis maximum rate. Used as G0 rapid rate.",
+            "tab": "Axis FeedRate",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "111",
+            "setting": "Y-axis maximum rate",
+            "units": "mm\/min",
+            "explanation": "Y-axis maximum rate. Used as G0 rapid rate.",
+            "tab": "Axis FeedRate",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "112",
+            "setting": "Z-axis maximum rate",
+            "units": "mm\/min",
+            "explanation": "Z-axis maximum rate. Used as G0 rapid rate.",
+            "tab": "Axis FeedRate",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "120",
+            "setting": "X-axis acceleration",
+            "units": "mm\/sec^2",
+            "explanation": "X-axis acceleration. Used for motion planning to not exceed motor torque and lose steps.",
+            "tab": "Axis Acceleration",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "121",
+            "setting": "Y-axis acceleration",
+            "units": "mm\/sec^2",
+            "explanation": "Y-axis acceleration. Used for motion planning to not exceed motor torque and lose steps.",
+            "tab": "Axis Acceleration",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "122",
+            "setting": "Z-axis acceleration",
+            "units": "mm\/sec^2",
+            "explanation": "Z-axis acceleration. Used for motion planning to not exceed motor torque and lose steps.",
+            "tab": "Axis Acceleration",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "130",
+            "setting": "X-axis maximum travel",
+            "units": "millimeters",
+            "explanation": "Maximum X-axis travel distance from homing switch. Determines valid machine space for soft-limits and homing search distances.",
+            "tab": "Axis Max Travel",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "131",
+            "setting": "Y-axis maximum travel",
+            "units": "millimeters",
+            "explanation": "Maximum Y-axis travel distance from homing switch. Determines valid machine space for soft-limits and homing search distances.",
+            "tab": "Axis Max Travel",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "132",
+            "setting": "Z-axis maximum travel",
+            "units": "millimeters",
+            "explanation": "Maximum Z-axis travel distance from homing switch. Determines valid machine space for soft-limits and homing search distances.",
+            "tab": "Axis Max Travel",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }];
+        var integerNode = $(`
+<div class='configItemHolder input-group input-group-sm'>
+    <label class=''></label>
+    <input class='configItem' type='text'>
+</div>
+`);
+
+        
+        var switchNode = $(`
+<div class='checkbox'>
+<label><input  type='checkbox'/>
+<span class='col-md-3'>Text goes here</span>
+</label>
+</div>
+`);
+        
+        var axisMaskNodeTable = $(`
+        
+    <table class="table-condensed">
+        <tbody>
+            <thead>
+            <tr class="row">
+                <th class="col-md-2">&nbsp;</th>
+                <th class="col-md-2">X-Axis</th>
+                <th class="col-md-2">Y-Axis</th>
+                <th class="col-md-2">Z-Axis</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+    </table>
+        
+`);
+        var axisMaskNode = $(`
+            <tr class="row">
+                <td class="col-md-2"></td>
+                <td class="col-md-2"><span><input type="checkbox" /></span></td>
+                <td class="col-md-2"><span><input type="checkbox"  /></span></td>
+                <td class="col-md-2"><span><input type="checkbox" />
+                <input class="result configItem" type="text"></span>
+                </td>
+            </tr>
+`);
+        
+        var tabs = [];
+        var tabHolder = [];
+        
+        $(document).ready(function() {
+          
+            configFormatData.forEach(function(item){
+                switch(item.fieldType){
+                    case 'integer':
+                         if(!tabs.hasOwnProperty(item.tab)){
+                            tabs[item.tab] = $(`
+<div class="panel panel-default">
+    <div class="panel-heading">` + item.tab + `
+    </div>
+    <div class="panel-body collapsible"> 
+    </div>
+</div>
+`);
+                         }
+                         var e = tabs[item.tab].find('.panel-body');
+                         var x = integerNode.clone(true);
+                         x.find('span').text(item.setting);
+                         x.find('input:first').data({
+                            code: item.code,
+                            minimum: item.minimum,
+                            size: 'mini'
+                         });
+                         if(item.hasOwnProperty('maximum')){
+                            x.find('input:first').data('maximum',item.maximum);
+                         }
+                         x.append( '<span>' + item.units + '</span>')
+                         e.append(x);
+      
+                    break;
+                    
+                    case 'switch':
+                        if(!tabs.hasOwnProperty(item.tab)){
+                            tabs[item.tab] = $(`
+<div class="panel panel-default">
+    <div class="panel-heading">` + item.tab + `
+    </div>
+    <div class="panel-body collapsible"> 
+    </div>
+</div>
+`);
+                        }
+                        var e = tabs[item.tab].find('.panel-body');
+                        var x = switchNode.clone(true);
+                        x.find('span').text(item.setting);
+                        x.find('checkbox:first').data({
+                            code: item.code,
+                            off: item.values[0],
+                            on: item.values[1],
+                            size: 'mini'
+                        }).addClass('bsToggle');
+                        e.append(x);
+                    break;
+                    case 'axismask':
+                        
+                        if(!tabs.hasOwnProperty(item.tab)){
+                            tabs[item.tab] = $(`
+<div class="panel panel-default">
+    <div class="panel-heading">` + item.tab + `
+    </div>
+    <div class="panel-body collapsible"> 
+    ` + axisMaskNodeTable.html() + `
+    </div>
+</div>
+`);
+                        }
+                        var e = tabs[item.tab].find('tbody:first');
+                        var x = axisMaskNode.clone(true);
+                        x.find('td:first').text(item.setting);
+                        x.find('input').each(function(index,inputItem){
+                           if(item.is(':checkbox')){
+                               x.data({    
+                                    setting: "setting"+index, 
+                                    value: Math.pow(2,index),
+                                    on: 'Inverted',
+                                    off: 'Normal',
+                                    size: 'mini'
+                                }).addClass('bsToggle').
+                                on('click',function(){
+                                  var parent = $(this).closest('tr');
+                                  var r = parent.find('.result:first');
+                                  parent.find(':checkbox').each(function(){
+                                      if($(this).is(':checked')){
+                                        var val = parseInt(r.val(), 10);
+                                        val = val + $(this).data('value');
+                                      }
+                                  });
+                                });
+                           } else {
+                                $(this).data('code', item.code);               
+                           }
+                            e.append(x);
+                        });
+                    break;
+                }
+            });
+            $(tabs).each(function(item){
+                $('#tabHolder').append(item);
+            })
+            $(tabs).find('.bsToggle').each(function(item){
+               item.bootstrapToggle({
+                   size:    item.size,
+                   on:      item.on,
+                   off:     item.off
+               }) 
+            });
+            
+        });
+    </script>
+    <style>
+        
+#axisMaskHolder th{text-align:center;}
+    </style>
+</head>
+
+<div id="tabHolder">
+    
+</div>
